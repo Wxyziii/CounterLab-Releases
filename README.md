@@ -9,7 +9,7 @@ Official public distribution and update repository for **CounterLab**, a Windows
 This repository exists to publish:
 
 - official CounterLab Windows installers and updater bundles;
-- signed Tauri updater metadata and signatures;
+- Tauri updater channel metadata and updater signatures;
 - release notes and version history;
 - Alpha testing instructions;
 - public bug reports, feature requests, and support information.
@@ -50,7 +50,7 @@ The application is designed as an external companion. CounterLab does **not** re
 
 CounterLab uses the Tauri updater model. Release builds are expected to include a built-in **Check for updates / Update now** flow.
 
-Official updater metadata is published as a signed `latest.json` release asset. The updater verifies the signature before accepting an update package.
+CounterLab's Alpha channel uses a public `latest.json` manifest that points to the current updater package on GitHub Releases. The manifest contains the signature generated for that updater package, and the installed application verifies that signature using its embedded updater public key before accepting the update.
 
 See [docs/UPDATER.md](docs/UPDATER.md) for the public release format and security rules.
 
