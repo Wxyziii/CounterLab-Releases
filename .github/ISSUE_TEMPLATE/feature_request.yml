@@ -1,0 +1,65 @@
+name: Feature request
+description: Suggest an improvement to CounterLab
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Describe the problem or workflow first, then the feature you want CounterLab to provide.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / use case
+      description: What are you trying to accomplish, and what is difficult or missing today?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Describe what CounterLab should do from the user's point of view.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Product area
+      options:
+        - CounterLab Live
+        - Match analysis
+        - Match history / tracker
+        - Training
+        - Steam / Valve integration
+        - FACEIT integration
+        - Demo pipeline
+        - Updates / installation
+        - Settings / localization
+        - UI / accessibility
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: mockup
+    attributes:
+      label: Example / mockup
+      description: Optional screenshots, sketches, links, or example flows that clarify the request.
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Optional. What workarounds or other approaches have you tried?
+
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Product boundary
+      options:
+        - label: This request does not require DLL injection, CS2 process-memory reading/writing, automated gameplay input, anti-cheat bypassing, or another invasive game modification.
+          required: true
