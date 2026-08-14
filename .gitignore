@@ -1,0 +1,33 @@
+# Release binaries belong in GitHub Releases, not in the Git tree.
+*.exe
+*.msi
+*.msix
+*.appx
+*.zip
+*.7z
+*.tar
+*.tar.gz
+*.sig
+
+# Never commit updater signing material or credentials.
+*.key
+*.pem
+*.p12
+*.pfx
+*.crt
+*.cer
+.env
+.env.*
+!.env.example
+
+# Common secret/config spill files.
+secrets.*
+credentials.*
+*.token
+
+# OS/editor noise.
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
