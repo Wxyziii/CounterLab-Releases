@@ -6,77 +6,73 @@ This document defines the public update-channel layout for CounterLab releases.
 
 The CounterLab updater should:
 
-- cost nothing to host during Alpha;
+- cost nothing to host during Pre-Alpha/Alpha;
 - use GitHub Releases for binary assets;
 - use Tauri's updater signature verification;
 - never require a GitHub personal access token in the installed application;
 - keep the updater private signing key outside this public repository;
-- support an Alpha channel now and a Stable channel later;
+- keep Pre-Alpha, Alpha, and Stable channels independent;
 - allow the user to choose when an available update is installed.
 
-## Recommended channel layout
+## Channel layout
 
-CounterLab should use channel-specific static manifests rather than depending on GitHub's `/releases/latest/` alias for Alpha builds.
-
-Planned public paths:
+CounterLab uses channel-specific static manifests rather than GitHub's `/releases/latest/` alias.
 
 ```text
 updater/
+  pre-alpha/
+    latest.json
   alpha/
     latest.json
   stable/
     latest.json
 ```
 
-The Alpha application can use an endpoint equivalent to:
+Example endpoints:
 
 ```text
+https://raw.githubusercontent.com/Wxyziii/CounterLab-Releases/main/updater/pre-alpha/latest.json
 https://raw.githubusercontent.com/Wxyziii/CounterLab-Releases/main/updater/alpha/latest.json
-```
-
-A future stable application can use:
-
-```text
 https://raw.githubusercontent.com/Wxyziii/CounterLab-Releases/main/updater/stable/latest.json
 ```
 
-This allows GitHub releases carrying SemVer prerelease versions such as `0.1.0-alpha.3` to remain GitHub prereleases without relying on GitHub's definition of the repository's "latest" non-prerelease release.
+This allows prerelease versions such as `0.1.0-pre-alpha.2` and `0.1.0-alpha.3` to remain GitHub prereleases while CounterLab still has a deterministic manifest for the channel installed on the user's PC.
 
 ## Tauri static manifest format
 
 Tauri v2 static updater metadata requires a valid version and, for each supported target, a download URL and the **contents** of the generated updater signature.
 
-For the current Windows x64 Alpha target:
+For a Windows x64 Pre-Alpha target:
 
 ```json
 {
-  "version": "0.1.0-alpha.1",
-  "notes": "CounterLab Alpha update",
+  "version": "0.1.0-pre-alpha.1",
+  "notes": "CounterLab Pre-Alpha update",
   "pub_date": "2026-08-14T16:00:00Z",
   "platforms": {
     "windows-x86_64": {
       "signature": "CONTENTS_OF_THE_GENERATED_SIG_FILE",
-      "url": "https://github.com/Wxyziii/CounterLab-Releases/releases/download/v0.1.0-alpha.1/COUNTERLAB_UPDATER_BUNDLE"
+      "url": "https://github.com/Wxyziii/CounterLab-Releases/releases/download/v0.1.0-pre-alpha.1/COUNTERLAB_UPDATER_ARTIFACT"
     }
   }
 }
 ```
 
-Do not publish an active `latest.json` with placeholder values. Tauri validates the manifest, so the live channel manifest should be created only when a real signed updater bundle exists.
+Do not publish an active `latest.json` with placeholder values. The live channel manifest is created only after a real signed release artifact exists.
 
-A non-active example is stored in [`updater/latest.example.json`](../updater/latest.example.json).
+A non-active structural example is stored in [`updater/latest.example.json`](../updater/latest.example.json).
 
 ## Required release artifacts
 
-A normal Windows Alpha release should contain, as applicable:
+A normal Windows release should contain, as applicable:
 
 - a user-facing CounterLab Windows installer;
 - the Tauri updater artifact produced by the build;
 - the updater artifact's generated `.sig` file;
 - release notes on the GitHub Release page;
-- the CounterLab license agreement distributed with that release when required by the application/release process.
+- the CounterLab license agreement/notice distributed with that release.
 
-Exact generated file names may change with the Tauri bundler configuration. The manifest URL must point to the updater artifact expected by the installed CounterLab build, not merely to the human-facing installer.
+The manifest URL must point to the artifact format accepted by the installed Tauri updater for that target. The private source repository's signed release workflow is responsible for using the actual artifact it built rather than a placeholder name.
 
 ## Signing-key rules
 
@@ -97,45 +93,68 @@ For automated builds, store the private key and any password needed to use it in
 
 ### Public key
 
-The corresponding updater public key is not secret. It belongs in the CounterLab Tauri updater configuration so installed applications can verify downloaded updates.
+The corresponding updater public key is not secret. Release builds compile it into CounterLab so installed applications can verify downloaded updates. Internal builds may intentionally omit it and show the signed updater as inactive.
 
 Losing the private key can prevent existing installations from accepting future updates. Back it up securely outside the repositories.
 
-## Publishing an Alpha update
+## Publishing an update
 
-At a high level:
+The private CounterLab repository contains the controlled release workflow. At a high level it:
 
-1. Prepare and validate the release in the private CounterLab source repository.
-2. Set the application version to the intended SemVer prerelease version.
-3. Build with Tauri updater artifacts enabled.
-4. Sign the updater artifact using the CounterLab updater private key.
-5. Create the matching tag/release in this repository.
-6. Upload the installer, updater artifact, and generated signature.
-7. Create/update `updater/alpha/latest.json` with:
-   - the exact version;
-   - release notes/summary;
-   - RFC 3339 publication date;
-   - exact updater artifact URL;
-   - exact contents of the generated signature file.
-8. Test update discovery from an older installed CounterLab Alpha build.
-9. Test download, signature validation, installation, restart, and post-update version display.
+1. receives an explicit version, channel, and release notes;
+2. validates the source candidate;
+3. sets matching application versions;
+4. builds with Tauri updater artifacts enabled;
+5. signs the updater artifact using the private key supplied only through CI secrets;
+6. verifies the installer/signature exist and computes SHA-256;
+7. creates the matching release in this public repository;
+8. uploads real installer/updater/signature assets;
+9. creates/updates `updater/<channel>/latest.json` using the actual version, URL, date, notes, and signature;
+10. commits the manifest only after the release assets exist.
 
-Only update the live Alpha manifest after all referenced release assets exist.
+Required private-repository GitHub Actions secrets are documented in CounterLab's internal release documentation. The release repository never receives the updater private key.
+
+## First updater acceptance
+
+Before relying on the updater for external testers, perform a real installed transition, for example:
+
+```text
+0.1.0-pre-alpha.1
+        ↓
+Check for updates
+        ↓
+0.1.0-pre-alpha.2
+        ↓
+signature verified
+        ↓
+install + restart
+```
+
+Verify that the update preserves:
+
+- CounterLab SQLite data and match history;
+- Steam/CS2 setup state and Credential Manager-backed authorization;
+- language;
+- Live display preference;
+- Windows startup preference;
+- single-instance/tray behavior.
+
+A source-level or CI-only updater test is not a substitute for this installed-runtime acceptance.
 
 ## Rollout behavior
 
-Recommended Alpha behavior:
+Recommended Pre-Alpha/Alpha behavior:
 
-- background startup may check for updates;
-- the application may show "Update available" in the main UI;
+- the application may check for updates while idle/backgrounded;
+- the user sees **Update available** in the main UI;
 - installation is user-triggered through **Update now**;
-- do not force-install ordinary Alpha updates while the user is in a live CS2 match;
+- do not interrupt a live CS2 match with an updater prompt;
 - if an update is discovered during a match, defer the visible prompt until CounterLab returns to the main post-match window;
-- never replace the running Live match workflow with an updater prompt.
+- successful installation relaunches CounterLab where supported by the updater/installer flow.
 
 ## Failure behavior
 
-CounterLab should fail safely when:
+CounterLab must fail safely when:
 
 - the manifest cannot be reached;
 - JSON is malformed;
@@ -144,8 +163,8 @@ CounterLab should fail safely when:
 - the updater signature is invalid;
 - installation fails.
 
-An updater failure must not prevent the existing installed CounterLab version from launching normally unless there is a separate explicit minimum-version policy in the future.
+An updater failure must leave the existing CounterLab installation usable unless a future explicit minimum-version policy says otherwise.
 
 ## Security principle
 
-The public release repository may be modified only by authorized maintainers, but update trust must not depend solely on repository access. Installed clients should accept updater packages only when Tauri signature verification succeeds using the embedded CounterLab updater public key.
+The public release repository may be modified only by authorized maintainers, but update trust must not depend solely on repository access. Installed clients accept updater packages only when Tauri signature verification succeeds using the CounterLab updater public key compiled into that release channel.
