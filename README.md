@@ -1,8 +1,8 @@
 # CounterLab Releases
 
-Official public distribution and update repository for **CounterLab**, a Windows desktop companion for Counter-Strike 2.
+Official public distribution and update repository for **CounterLab**, a proprietary Windows desktop companion for Counter-Strike 2.
 
-> **Alpha software:** CounterLab is under active development. Alpha builds may contain bugs, incomplete features, breaking changes, or data-format changes. Back up anything important and report reproducible issues.
+> **Pre-Alpha software:** CounterLab is under active development. Pre-Alpha builds are intended for limited testing and may contain bugs, incomplete features, breaking changes, or data-format changes. Keep important local demos/backups and report reproducible issues.
 
 ## What this repository is
 
@@ -11,7 +11,7 @@ This repository exists to publish:
 - official CounterLab Windows installers and updater bundles;
 - Tauri updater channel metadata and updater signatures;
 - release notes and version history;
-- Alpha testing instructions;
+- Pre-Alpha/Alpha testing instructions;
 - public bug reports, feature requests, and support information.
 
 **CounterLab source code is proprietary and is not hosted in this repository.** This repository must never contain source code from the private CounterLab repository, updater private keys, API secrets, Steam credentials, Supabase secrets, access tokens, or other private material.
@@ -22,7 +22,7 @@ Use the **Releases** section of this repository for official builds:
 
 **https://github.com/Wxyziii/CounterLab-Releases/releases**
 
-During Alpha, only download CounterLab from this repository or from a location explicitly linked by the CounterLab application.
+During Pre-Alpha/Alpha, only download CounterLab from this repository or from a location explicitly linked by the CounterLab application.
 
 ### Current target
 
@@ -30,27 +30,38 @@ During Alpha, only download CounterLab from this repository or from a location e
 - x64
 - Counter-Strike 2 installed through Steam
 
-Additional platforms are not currently part of the Alpha target.
+Additional platforms are not currently part of the Pre-Alpha target.
 
-## CounterLab Alpha experience
+## CounterLab Pre-Alpha experience
 
-The Alpha is being built around an automatic match lifecycle:
+The first limited tester build is centered on the core installed-app lifecycle:
 
-1. CounterLab can optionally start with Windows and remain in the background.
-2. CounterLab watches for CS2 and receives supported Game State Integration (GSI) telemetry.
-3. When an actual supported match starts, the main CounterLab window is hidden and **CounterLab Live** opens automatically on the configured display.
-4. CounterLab Live shows live match information available through supported telemetry and CounterLab's own calculations.
-5. When the match finishes, the Live window closes and the main CounterLab window returns directly to that match's overview.
-6. CounterLab discovers and downloads supported post-match demos automatically where the connected platform permits it.
-7. The demo is parsed and the match overview is upgraded with verified post-match analysis.
+1. A fresh user receives guided setup for language, Steam identity, CS2 match access, optional FACEIT, CounterLab GSI, Live display and optional Windows startup.
+2. CounterLab can start quietly with Windows and remain available through the system tray when the user enables that option.
+3. CounterLab receives supported CS2 Game State Integration (GSI) telemetry through its local authenticated endpoint.
+4. When a supported real match starts, the main CounterLab window is hidden and **CounterLab Live** opens once on the configured display.
+5. Live updates throughout the match without reopening/repositioning every round and is configured not to take keyboard focus from CS2.
+6. When the match finishes or telemetry is interrupted, Live closes/restores safely and the main CounterLab window returns to the Match Overview.
+7. Valve match-history sync can attach the later sharing code to the same Live-backed record when the evidence is unambiguous.
+8. For the first Pre-Alpha, the user can link/import a local demo to unlock verified deep analysis on that same match record.
 
-The application is designed as an external companion. CounterLab does **not** require DLL injection, CS2 process-memory reading, automated gameplay input, or other invasive game modification for this workflow.
+Automatic Valve replay retrieval is **not** presented as a finished Pre-Alpha feature. Valve's sharing-code path currently does not provide CounterLab with a documented public REST replay resolver, so manual/local demo linking remains the supported fallback instead of using an undocumented Game Coordinator shortcut.
+
+FACEIT account tracking uses its official Data API once CounterLab's server-side service is configured. Automatic FACEIT demo download additionally requires separate FACEIT Downloads API access and is not claimed as working until that access is approved and validated.
+
+The application is designed as an external companion. CounterLab does **not** require DLL injection, CS2 process-memory reading/writing, renderer hooks, automated gameplay input, or other invasive game modification for this workflow.
 
 ## Updates
 
-CounterLab uses the Tauri updater model. Release builds are expected to include a built-in **Check for updates / Update now** flow.
+CounterLab contains a signed Tauri updater architecture with separate channels for:
 
-CounterLab's Alpha channel uses a public `latest.json` manifest that points to the current updater package on GitHub Releases. The manifest contains the signature generated for that updater package, and the installed application verifies that signature using its embedded updater public key before accepting the update.
+- `pre-alpha`
+- `alpha`
+- `stable`
+
+Internal builds may intentionally show the updater as inactive. Public updater-enabled builds contain only the updater **public verification key**. The private signing key remains outside both repositories and is used only by the controlled release workflow.
+
+A channel's `latest.json` manifest is published only after the corresponding signed release artifact exists. Installed CounterLab verifies the updater signature before accepting an update.
 
 See [docs/UPDATER.md](docs/UPDATER.md) for the public release format and security rules.
 
@@ -62,9 +73,9 @@ Before opening an issue, check the existing issues and the [support guide](SUPPO
 - **Feature request:** use the Feature Request template.
 - **Security vulnerability:** **do not file a public issue**. Follow [SECURITY.md](SECURITY.md).
 
-When reporting an Alpha problem, include the CounterLab version, Windows version, CS2 mode/platform involved, reproduction steps, expected behavior, actual behavior, and relevant sanitized logs.
+When reporting a Pre-Alpha/Alpha problem, include the CounterLab version, Windows version, CS2 mode/platform involved, reproduction steps, expected behavior, actual behavior, and relevant sanitized logs.
 
-Never post Steam API keys, authentication codes, access tokens, passwords, private updater keys, session cookies, or other secrets in an issue.
+Never post Steam API keys, Game Authentication Codes, access tokens, passwords, private updater keys, session cookies, or other secrets in an issue.
 
 ## Changelog
 
@@ -72,9 +83,9 @@ See [CHANGELOG.md](CHANGELOG.md).
 
 Each GitHub Release should also contain user-facing release notes describing important additions, fixes, known issues, and any migration or compatibility notes.
 
-## Alpha testing
+## Testing
 
-See [docs/ALPHA_TESTING.md](docs/ALPHA_TESTING.md) for the recommended acceptance flow used by testers.
+See [docs/ALPHA_TESTING.md](docs/ALPHA_TESTING.md) for the acceptance flow. The same checklist is used during the limited Pre-Alpha, with automatic demo retrieval treated as an Alpha roadmap item rather than a Pre-Alpha release gate.
 
 ## Licensing
 
