@@ -1,0 +1,117 @@
+name: Bug report
+description: Report a reproducible problem in a CounterLab Alpha release
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for testing CounterLab. Do not include passwords, Steam API keys, CS2 Game Authentication Codes, access tokens, session cookies, updater private keys, or other secrets.
+
+  - type: input
+    id: counterlab-version
+    attributes:
+      label: CounterLab version
+      description: Find this in CounterLab Settings/About or the release you installed.
+      placeholder: 0.1.0-alpha.1
+    validations:
+      required: true
+
+  - type: input
+    id: windows-version
+    attributes:
+      label: Windows version
+      placeholder: Windows 11 24H2
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area
+      options:
+        - Installation / first run
+        - Windows autostart / background process
+        - CS2 / GSI detection
+        - CounterLab Live
+        - Match lifecycle / window switching
+        - Steam / Valve match discovery
+        - FACEIT integration
+        - Demo download
+        - Demo parsing / analysis
+        - Match history / tracker
+        - Update system
+        - Settings / localization
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: match-platform
+    attributes:
+      label: Match type / platform
+      options:
+        - Not match-related
+        - Premier
+        - Competitive
+        - FACEIT
+        - Wingman
+        - Casual
+        - Workshop / training
+        - Other / unknown
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Give the shortest exact sequence that reproduces the problem.
+      placeholder: |
+        1. Start CounterLab...
+        2. Launch CS2...
+        3. Start a Premier match...
+        4. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Relevant setup details
+      description: For Live View include monitor count, selected Live display, and CS2 display mode when relevant.
+      placeholder: Two monitors; Live display = Monitor 2; CS2 = fullscreen; CounterLab started through Windows autostart.
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Sanitized logs / screenshots
+      description: Paste only relevant sanitized logs or drag screenshots/video here. Remove all secrets before posting.
+      render: text
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Safety check
+      options:
+        - label: I checked that this report does not contain passwords, API keys, auth codes, access tokens, session cookies, updater private keys, or other secrets.
+          required: true
+        - label: I searched existing issues for the same problem.
+          required: true
+        - label: This is not a security vulnerability requiring private disclosure.
+          required: true
