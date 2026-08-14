@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/Wxyziii/CounterLab-Releases/blob/main/SECURITY.md
+    about: Read the private reporting instructions. Do not disclose exploitable security issues in a public GitHub issue.
+  - name: CounterLab support guide
+    url: https://github.com/Wxyziii/CounterLab-Releases/blob/main/SUPPORT.md
+    about: Check what information to include before filing an Alpha bug report.
