@@ -1,0 +1,11 @@
+{
+  "version": "0.1.0-alpha.1",
+  "notes": "Example only. Do not configure CounterLab to use this file as a live updater manifest.",
+  "pub_date": "2026-08-14T16:00:00Z",
+  "platforms": {
+    "windows-x86_64": {
+      "signature": "CONTENTS_OF_THE_GENERATED_SIG_FILE",
+      "url": "https://github.com/Wxyziii/CounterLab-Releases/releases/download/v0.1.0-alpha.1/COUNTERLAB_UPDATER_BUNDLE"
+    }
+  }
+}
